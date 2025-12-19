@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ecommerce-db
+    restart: always
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: ecommerce
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+        
+  api: 
+    build:
+      context: .
+      dockerfile: Ecommerce.Api/Dockerfile
+    container_name: ecommerce-api
+    depends_on:
+      - postgres
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionString__Default:
+        Host=postgres;Port=5432;Database=ecommerce;Username=ecommerce;Password=secret
+    ports:
+      - "5000:5000"
+        
+  admin:
+    build:
+      context: .
+      dockerfile: Ecommerce.Admin/Dockerfile
+    container_name: ecommerce-admin
+    depends_on:
+      - api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ApiSettings__BaseUrl: http://api:8080
+    ports:
+      - "5001:8080"
+        
+volumes:
+  pgdata:
