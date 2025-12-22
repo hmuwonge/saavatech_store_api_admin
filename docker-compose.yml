@@ -21,10 +21,12 @@ services:
       - postgres
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTPS_PORT: ""
       ConnectionString__Default:
         Host=postgres;Port=5432;Database=ecommerce;Username=ecommerce;Password=secret
     ports:
-      - "5000:5000"
+      - "5075:8080"
+      - "7207:8081"
         
   admin:
     build:
@@ -35,9 +37,13 @@ services:
       - api
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTPS_PORT: ""
       ApiSettings__BaseUrl: http://api:8080
     ports:
-      - "5001:8080"
+      - "5002:8080"
+    volumes:
+      - dpkeys:/root/.aspnet/DataProtection-Keys
         
 volumes:
   pgdata:
+  dpkeys:
