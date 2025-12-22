@@ -1,7 +1,7 @@
-﻿using Ecommerce.Application.Abstractions;
-using Ecommerce.Application.Abstractions.Repositories;
+﻿using Ecommerce.Application.Abstractions.Repositories;
 using Ecommerce.Application.Wrappers;
 using Ecommerce.Domain.Entities;
+using Mapster;
 using MediatR;
 
 namespace Ecommerce.Application.Features.Products.Create;
