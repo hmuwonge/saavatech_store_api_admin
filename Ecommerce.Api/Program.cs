@@ -1,5 +1,8 @@
 using System.Text;
 using Ecommerce.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using Ecommerce.Application.Features.Products.Commands.Create;
+using Ecommerce.Application.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,12 +34,14 @@ builder.Services.AddAuthorization(opt =>
         opt.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     });
 // builder.Services.AddDbC
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+// builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 builder.Services.AddControllers();
 
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.RegisterServicesFromAssemblyContaining<CreateProductCommandHandler>();
 });
 
 builder.Services.AddEndpointsApiExplorer();

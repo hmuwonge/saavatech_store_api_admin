@@ -1,4 +1,4 @@
-﻿using Ecommerce.Application.Features.Products.Create;
+﻿using Ecommerce.Application.Features.Products.Commands.Create;
 using Ecommerce.Shared.Dtos;
 using Ecommerce.Shared.Responses;
 using MediatR;
@@ -10,29 +10,29 @@ namespace Ecommerce.Api.Controllers;
 [Route("api/[controller]")]
 public class ProductController : BaseApiController
 {
-    private readonly IMediator _mediator;
-
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
     {
-        Console.WriteLine($"DEBUG: _mediator is null? {_mediator == null}");
         Console.WriteLine($"DEBUG: request is null? {request == null}");
+        Console.WriteLine($"DEBUG: request {request?.Name}");
         try
         {
-            var id = await _mediator.Send(
-                new CreateProductCommand(request.Name,  request.Price, request.Stock,request.Description));
-            return Ok(new ApiResponse<Guid>
+            var response = await Sender.Send(
+                new CreateProductCommand
+                {
+                    CreateProduct = request
+                });
+
+            if (response.IsSuccessful)
             {
-                Success = true,
-                Data = id
-            });
+                return Ok(response);
+            }
+            return BadRequest(response);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
-       
     }
-    
 }

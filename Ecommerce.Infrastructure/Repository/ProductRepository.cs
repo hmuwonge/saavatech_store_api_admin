@@ -8,10 +8,17 @@ namespace Ecommerce.Infrastructure.Repository;
 public class ProductRepository: IProductRepository
 {
     private readonly AppDbContext _context;
-    public async Task AddAsync(Product product)
+
+    public ProductRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<int> AddAsync(Product product)
     {
         _context.Products.Add(product);
-        await _context.SaveChangesAsync();
+        var res = await _context.SaveChangesAsync();
+        return res;
     }
 
     public async Task<Product> FindByIdAsync(Guid id)
